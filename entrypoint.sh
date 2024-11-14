@@ -9,7 +9,7 @@ if [ ! -f "${MAPSHOT_ROOT_DIRECTORY:-"/mapshot"}/factorio/bin/x64/factorio" ]; t
         echo "Exiting..."
         exit
     fi
-    curl "https://www.factorio.com/get-download/latest/alpha/linux64?username=$FACTORIO_USERNAME&token=$FACTORIO_TOKEN" -L -o /root/factorio-linux64.tar.xz
+    curl "https://www.factorio.com/get-download/latest/expansion/linux64?username=$FACTORIO_USERNAME&token=$FACTORIO_TOKEN" -L -o /root/factorio-linux64.tar.xz
     echo "Extracting..."
     tar xvf /root/factorio-linux64.tar.xz -C ${MAPSHOT_ROOT_DIRECTORY:-"/mapshot"} && mkdir -p ${MAPSHOT_FACTORIO_DATA_DIRECTORY:-"${MAPSHOT_ROOT_DIRECTORY:-"/mapshot"}/factorio"}/mods && echo '{}' >${MAPSHOT_FACTORIO_DATA_DIRECTORY:-"${MAPSHOT_ROOT_DIRECTORY:-"/mapshot"}/factorio"}/mods/mod-list.json
 else
