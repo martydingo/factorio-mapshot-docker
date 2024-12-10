@@ -17,25 +17,24 @@ Several default paths and settings are configurable via environment variables, a
 
 The following environment variables are used in the provided shell script, and here is a description of each one, explaining what it does:
 
-| Environment Variable                  | Default Value                                       | Description                                                                                                                                          |
-| ------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| MAPSHOT_ROOT_DIRECTORY                | "/mapshot"                                          | Defines the root directory where Factorio files and related data are located. Defaults to /mapshot if not set.                                       |
-| FACTORIO_USERNAME                     | N/A                                                 | The username required to authenticate with Factorio's website to download Factorio game files.                                                       |
-| FACTORIO_TOKEN                        | N/A                                                 | The authentication token associated with the user, used in conjunction with FACTORIO_USERNAME to authenticate Factorio downloads.                    |
-| MAPSHOT_FACTORIO_DATA_DIRECTORY       | "$MAPSHOT_ROOT_DIRECTORY/factorio"                  | Specifies the directory where Factorio data (saves, mods, etc.) is stored. Defaults to $MAPSHOT_ROOT_DIRECTORY/factorio if not set.                  |
-| MAPSHOT_FACTORIO_BINARY_PATH          | "$MAPSHOT_ROOT_DIRECTORY/factorio/bin/x64/factorio" | Defines the path to the Factorio binary (executable). Defaults to $MAPSHOT_ROOT_DIRECTORY/factorio/bin/x64/factorio if not set.                      |
-| MAPSHOT_MODE                          | N/A                                                 | Determines the script's operation mode: "render" for rendering maps or "serve" for starting a Factorio server to serve the map.                      |
-| MAPSHOT_WORKING_DIRECTORY             | "$MAPSHOT_ROOT_DIRECTORY/factorio"                  | Defines the working directory for temporary files during Factorio operations. Defaults to $MAPSHOT_ROOT_DIRECTORY/factorio if not set.               |
-| MAPSHOT_AREA                          | "all"                                               | Specifies which area of the map to render. Defaults to "all", meaning the entire map is rendered.                                                    |
-| MAPSHOT_MINIMUM_TILES                 | 64                                                  | Defines the minimum number of tiles used for map rendering. Controls the map's resolution.                                                           |
-| MAPSHOT_MAXIMUM_TILES                 | 0                                                   | Defines the maximum number of tiles used for rendering. A value of 0 means no limit.                                                                 |
-| MAPSHOT_JPEG_QUALITY                  | 90                                                  | Controls the quality of the rendered map in JPEG format. The value is a percentage, where a higher value results in better quality but larger files. |
-| MAPSHOT_MINIMUM_JPEG_QUALITY          | 90                                                  | Specifies the minimum JPEG quality for rendered images. The script will adjust the image quality if it falls below this threshold.                   |
-| MAPSHOT_SURFACES_TO_RENDER            | "all_"                                              | Determines which surfaces of the Factorio map to render. Defaults to all surfaces (*all*). Can be set to specific surfaces (e.g., "nauvis").         |
-| MAPSHOT_VERBOSE_FACTORIO_LOGGING      | Not set (optional)                                  | Enables verbose logging for Factorio during rendering or serving. If set, the script will include the --factorio_verbose flag.                       |
-| MAPSHOT_VERBOSE_MAPSHOT_LOG_LEVEL_INT | 9                                                   | Controls the verbosity of the mapshot tool's logging. The higher the number, the more detailed the logs. Defaults to 9, the most detailed log level. |
-| MAPSHOT_INTERVAL                      | 600                                                 | Defines the interval (in seconds) between map renders when the script is running in render mode. A higher value means fewer renders.                 |
-| FACTORIO_SAVE                         | N/A                                                 | Specifies the path to the Factorio save file that will be used for map rendering. This is the save file the mapshot tool will render into an image.  |
+| Environment Variable                  | Default Value                                       | Description                                       |
+| ------------------------------------- | --------------------------------------------------- | --------------------------------------------------- |
+| MAPSHOT_PREFIX                        | "mapshot"                                           | Mapshot will prefix all files it creates with that value. |
+| MAPSHOT_ROOT_DIRECTORY                | "/opt/mapshot"                                      | Defines the root directory where Mapshot and Factorio data are stored. |
+| MAPSHOT_FACTORIO_DATA_DIRECTORY       | "${MAPSHOT_ROOT_DIRECTORY}/factorio"                | Specifies the directory where Factorio data (saves, mods, etc.) is stored. |
+| MAPSHOT_FACTORIO_BINARY_PATH          | "${MAPSHOT_ROOT_DIRECTORY}/factorio/bin/x64/factorio" | Defines the path to the Factorio binary (executable). |
+| MAPSHOT_WORKING_DIRECTORY             | "${MAPSHOT_ROOT_DIRECTORY}"                         | Defines the working directory for temporary files during Factorio operations. |
+| MAPSHOT_KEEP_ONLY_LATEST              | "false"                                             | When set to "true," ensures that only the latest map rendering is kept, deleting older renders. |
+| MAPSHOT_INTERVAL                      | 600                                                 | Defines the interval (in seconds) between map renders when the script is running in render mode. A higher value means fewer renders. |
+| MAPSHOT_SAVE_MODE                     | N/A                                                 | When set to "latest", the `MAPSHOT_SAVE_NAME` variable is ignored, and the most recently modified save file in `FACTORIO_SAVE_PATH` is automatically discovered and used based on its modification time. |
+| MAPSHOT_SAVE_NAME                     | N/A                                                 | Specifies the name of the save file to use for rendering. If not set, the default save file is used. |
+| FACTORIO_RELEASE                      | "stable"                                            | Determines which release of Factorio to use. Options include "stable" and "experimental". |
+| FACTORIO_AUTO_UPDATE                  | "true"                                              | If set to "true," automatically updates Factorio to the latest release within the specified release tier. |
+| FACTORIO_SAVE                         | "/opt/factorio/saves/dummy.zip"                     | Specifies the full path to the Factorio save file that will be used for map rendering. Can also be a `http(s)://` address pointing to a the `.zip` file. This is the save file the mapshot tool will render into an image. |
+| FACTORIO_SAVE_PATH                    | The directory containing "${FACTORIO_SAVE}"         | Specifies the directory where Factorio save files are stored. |
+
+When using `MAPSHOT_SAVE_MODE="latest"` the generated Mapshots will likely be named like: `_autosave1`,`_autosave2`,`_autosave3` etc.  
+Combining `MAPSHOT_SAVE_MODE="latest"` with `MAPSHOT_SAVE_NAME="mysave"` the generated Mapshots will be named `mysave`.
 
 ## Docker Compose
 
@@ -61,8 +60,7 @@ services:
       MAPSHOT_INTERVAL: "600"
     volumes:
       - factorio-data:/opt/factorio:ro
-      - mapshot-data:/mapshot
-    restart: on-failure # Restart on failure (non-zero exit code)
+      - mapshot-data:/opt/mapshot
 
   mapshot-server:
     image: martydingo/mapshot:latest
@@ -72,7 +70,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - mapshot-data:/mapshot
+      - mapshot-data:/opt/mapshot
 
 volumes:
   factorio-data:
@@ -140,7 +138,7 @@ spec:
             - mountPath: /opt/factorio
               name: factorio-mapshot
               readOnly: true
-            - mountPath: /mapshot
+            - mountPath: /opt/mapshot
               name: mapshot-mapshot
         - name: mapshot-server
           image: martydingo/mapshot:latest
@@ -155,7 +153,7 @@ spec:
               protocol: TCP
               name: http
           volumeMounts:
-            - mountPath: /mapshot
+            - mountPath: /opt/mapshot
               name: mapshot-mapshot
       volumes:
         - name: factorio-mapshot
