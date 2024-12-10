@@ -30,11 +30,11 @@ The following environment variables are used in the provided shell script, and h
 | MAPSHOT_SAVE_NAME                     | N/A                                                 | Specifies the name of the save file to use for rendering. If not set, the default save file is used. |
 | FACTORIO_RELEASE                      | "stable"                                            | Determines which release of Factorio to use. Options include "stable" and "experimental". |
 | FACTORIO_AUTO_UPDATE                  | "true"                                              | If set to "true," automatically updates Factorio to the latest release within the specified release tier. |
-| FACTORIO_SAVE                         | "/opt/factorio/saves/dummy.zip"                     | Specifies the full path to the Factorio save file that will be used for map rendering. This is the save file the mapshot tool will render into an image. |
+| FACTORIO_SAVE                         | "/opt/factorio/saves/dummy.zip"                     | Specifies the full path to the Factorio save file that will be used for map rendering. Can also be a `http(s)://` address pointing to a the `.zip` file. This is the save file the mapshot tool will render into an image. |
 | FACTORIO_SAVE_PATH                    | The directory containing "${FACTORIO_SAVE}"         | Specifies the directory where Factorio save files are stored. |
 
-When using `MAPSHOT_SAVE_MODE="latest` the generated Mapshots will likely be named like: `_autosave1`,`_autosave2`,`_autosave3` etc.  
-Combining `MAPSHOT_SAVE_MODE="latest` with `MAPSHOT_SAVE_NAME="mysave"` the generated Mapshots will be named `mysave`.
+When using `MAPSHOT_SAVE_MODE="latest"` the generated Mapshots will likely be named like: `_autosave1`,`_autosave2`,`_autosave3` etc.  
+Combining `MAPSHOT_SAVE_MODE="latest"` with `MAPSHOT_SAVE_NAME="mysave"` the generated Mapshots will be named `mysave`.
 
 ## Docker Compose
 
