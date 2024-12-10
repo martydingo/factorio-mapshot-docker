@@ -15,7 +15,6 @@ RUN groupadd --gid 1001 mapshot && \
         useradd --uid 1001 --gid 1001 --home /opt/mapshot --shell /usr/sbin/nologin mapshot && \
         mkdir --parents /opt/mapshot && \
         chown --recursive mapshot:mapshot /opt/mapshot
-RUN mkdir --parents /opt/mapshot
 
 COPY src/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
